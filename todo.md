@@ -12,10 +12,12 @@ for hack day
  * tag blottr
  * update font
  * update background colour
+ * write and init from disc
  
 better app
 ----------
 
+ * real persistence
  * support panda auth
  * use panda for user stuff
  * api endpoints (REST?)
