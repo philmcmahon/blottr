@@ -6,12 +6,13 @@ import java.util.concurrent.atomic.{AtomicReference, AtomicLong}
 case class Blottr(
                    id: Long,
                    desc: String,
+                   `type`: String,
                    payload: Option[String],
                    user: Option[String],
                    composerId: Option[String],
                    tags: List[String]) {
 
-  def asJson = s"""{"id":$id, "desc":"$desc" ${payload.map(", payload:" + _).getOrElse("")}}"""
+  def asJson = s"""{"id":${id}, "desc":"${desc}", "type":"${`type`}" ${payload.map(", payload:" + _).getOrElse("")}}"""
 }
 
 case class BlottrQuery(
@@ -53,7 +54,7 @@ object BlottrRepo {
     val existing = blottrs.filter(_.composerId == Some(composerId)).headOption
     existing getOrElse {
       val id = idSeq.incrementAndGet()
-      val blottr = Blottr(id, "Content blottr", None, None, Some(composerId), Nil)
+      val blottr = Blottr(id, "Content blottr", "content", None, None, Some(composerId), Nil)
       blottrStore.set(blottr :: blottrStore.get)
       blottr
     }
@@ -64,7 +65,7 @@ object BlottrRepo {
     val existing = blottrs.filter(_.user == Some(user)).headOption
     existing getOrElse {
       val id = idSeq.incrementAndGet()
-      val blottr = Blottr(id, "Personal blottr", Some(user), None, None, Nil)
+      val blottr = Blottr(id, "Personal blottr", "user", Some(user), None, None, Nil)
       blottrStore.set(blottr :: blottrStore.get)
       blottr
     }
@@ -88,6 +89,7 @@ object BlottrRepo {
       val spawnedBlottr = b.copy(
         id = idSeq.incrementAndGet(),
         desc = s"Tag $desc blottr",
+        `type` = "tag",
         user = None,
         composerId = None,
         tags = tag :: b.tags
