@@ -48,6 +48,18 @@ object BlottrController extends Controller {
     }
   }
 
+  def addPersonalBlottr = CORSable("https://composer.local.dev-gutools.co.uk") {
+    Action { req =>
+
+      val submission = req.body.asJson.get
+      val user = (submission \ "user").get.as[String]
+
+      BlottrRepo.addUserBlottr(user)
+
+      NoContent
+    }
+  }
+
   def allowCORSAccess(methods: String, args: Any*) = CORSable("https://composer.local.dev-gutools.co.uk") {
 
     Action { implicit req =>

@@ -65,7 +65,7 @@ object BlottrRepo {
     val existing = blottrs.filter(_.user == Some(user)).headOption
     existing getOrElse {
       val id = idSeq.incrementAndGet()
-      val blottr = Blottr(id, "Personal blottr", "user", Some(user), None, None, Nil)
+      val blottr = Blottr(id, "Personal blottr", "user", None, Some(user), None, Nil)
       blottrStore.set(blottr :: blottrStore.get)
       blottr
     }
