@@ -1,3 +1,4 @@
+import play.PlayImport.PlayKeys._
 
 lazy val commonLibraryDependencies = Seq(
   ws,
@@ -12,6 +13,7 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 .settings(commonSettings: _*).
   settings(
-    name := "blottr"
+    name := "blottr",
+    playDefaultPort := 9681
   )
  

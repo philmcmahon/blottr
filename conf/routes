@@ -1,3 +1,5 @@
 
 GET     /hello             controllers.BlottrController.hello
 GET     /search            controllers.BlottrController.search
+
+OPTIONS        /*url   controllers.BlottrController.allowCORSAccess(methods = "PUT, POST, GET", url: String)

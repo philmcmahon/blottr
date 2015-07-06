@@ -1,0 +1,4 @@
+name: blottr
+mappings:
+  - prefix: blottr
+    port: 9681
