@@ -1,0 +1,59 @@
+#
+# Admin
+#
+
+## Composer client-side
+
+composer/src/bower_components/
+
+# Bower components
+flexible-content-admin/src/main/webapp/static/composer/components/
+# Compiled JS (TODO: move into `composer/js`?)
+flexible-content-admin/src/main/webapp/static/composer/dist/
+# Compiled CSS
+flexible-content-admin/src/main/webapp/static/composer/stylesheets/compiled/
+flexible-content-admin/target/webapp/static/composer/stylesheets/compiled/
+flexible-content-admin/src/main/resources/conf/flexible_content_admin/assets-mapping.json
+flexible-content-admin/coverage
+# Icon compilation targets (TODO: When we move to another sprite generator)
+# flexible-content-admin/target/webapp/static/composer/stylesheets/icons/
+# flexible-content-admin/src/main/webapp/static/composer/stylesheets/icons/
+# flexible-content-admin/src/main/webapp/static/composer/img/icons/main.png
+# flexible-content-admin/src/main/webapp/static/composer/img/icons/rich-text-editor.png
+
+
+# Custom Lodash build
+flexible-content-admin/src/main/webapp/static/composer/other-libs/lodash.js
+# Custom Editor build
+flexible-content-admin/src/main/webapp/static/composer/other-libs/scribe.js
+flexible-content-admin/src/main/webapp/static/composer/other-libs/scribe.js.map
+
+#
+# Front-end
+#
+
+flexible-content-frontend/src/main/webapp/static/js/components/
+
+#
+# Other
+#
+
+target/
+project/boot/
+.idea/
+.idea_modules/
+node_modules/
+logs
+*/logs/*
+.history
+*.sublime-project
+*.sublime-workspace
+.jshintrc
+.DS_Store
+blink/
+.tern-project
+.tern-port
+npm-debug.log
+/flexible-content.iml
+docs/
+integration/fail-screenshots/
