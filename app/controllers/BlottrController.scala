@@ -67,9 +67,16 @@ object BlottrController extends Controller {
       val payload = (submission \ "payload").get.toString
 
 
-      println(payload)
-
       BlottrRepo.updateBlottrPayload(id, payload)
+
+      NoContent
+    }
+  }
+
+  def deleteBlottr(id: Long) = CORSable("https://composer.local.dev-gutools.co.uk") {
+    Action { req =>
+
+      BlottrRepo.removeBlottr(id)
 
       NoContent
     }
