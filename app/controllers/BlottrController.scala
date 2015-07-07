@@ -60,6 +60,21 @@ object BlottrController extends Controller {
     }
   }
 
+  def putPayload(id: Long) = CORSable("https://composer.local.dev-gutools.co.uk") {
+    Action { req =>
+
+      val submission = req.body.asJson.get
+      val payload = (submission \ "payload").get.toString
+
+
+      println(payload)
+
+      BlottrRepo.updateBlottrPayload(id, payload)
+
+      NoContent
+    }
+  }
+
   def allowCORSAccess(methods: String, args: Any*) = CORSable("https://composer.local.dev-gutools.co.uk") {
 
     Action { implicit req =>

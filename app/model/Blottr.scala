@@ -12,7 +12,7 @@ case class Blottr(
                    composerId: Option[String],
                    tags: List[String]) {
 
-  def asJson = s"""{"id":${id}, "desc":"${desc}", "type":"${`type`}" ${payload.map(", payload:" + _).getOrElse("")}}"""
+  def asJson = s"""{"id":${id}, "desc":"${desc}", "type":"${`type`}" ${payload.map(""", "payload":""" + _).getOrElse("")}}"""
 }
 
 case class BlottrQuery(
