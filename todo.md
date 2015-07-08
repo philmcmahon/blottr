@@ -4,15 +4,8 @@ ToDo
 for hack day
 ------------
 
- * blottr blocks editable
- * full body like edit ability
- * copy elements
- * delete personal block
- * copy and clear
  * tag blottr
- * update font
  * update background colour
- * write and init from disc
  
 better app
 ----------
@@ -32,6 +25,13 @@ better composer stuff
  * error messaging (al la workflow etc)
  * loading throb
  * presence on blottrs
+ 
+ * clean body after copy across
+ * per element copy?
+ * twizzler burn through
+ 
+ * move over to the right with proposer
+ * right hand panel works like the left hand ones.
 
 productionising
 ---------------
