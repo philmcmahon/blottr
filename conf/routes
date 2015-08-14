@@ -2,7 +2,7 @@
 GET     /hello             controllers.BlottrController.hello
 GET     /search            controllers.BlottrController.search
 POST    /addPersonalBlottr controllers.BlottrController.addPersonalBlottr
-PUT     /blottr/:id        controllers.BlottrController.putPayload(id: Long)
-DELETE  /blottr/:id        controllers.BlottrController.deleteBlottr(id: Long)
+PUT     /blottr/:key       controllers.BlottrController.putPayload(key: String)
+DELETE  /blottr/:key       controllers.BlottrController.deleteBlottr(key: String)
 
 OPTIONS        /*url   controllers.BlottrController.allowCORSAccess(methods = "PUT, POST, GET, DELETE", url: String)

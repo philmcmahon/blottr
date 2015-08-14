@@ -1,105 +1,91 @@
 package model
 
-import java.util.concurrent.atomic.{AtomicReference, AtomicLong}
+import com.amazonaws.services.dynamodbv2.document.Item
+import services.AWS.Dynamo
 
 
 case class Blottr(
-                   id: Long,
+                   key: String,
                    desc: String,
                    `type`: String,
-                   payload: Option[String],
-                   user: Option[String],
-                   composerId: Option[String],
-                   tags: List[String]) {
+                   payload: Option[String]) {
 
-  def asJson = s"""{"id":${id}, "desc":"${desc}", "type":"${`type`}" ${payload.map(""", "payload":""" + _).getOrElse("")}}"""
+  def asJson = s"""{"key":"${key}", "desc":"${desc}", "type":"${`type`}" ${payload.map(""", "payload":""" + _).getOrElse("")}}"""
+
+  def asDynamoItem = {
+    val item = new Item()
+      .withString("key", key)
+      .withString("desc", desc)
+      .withString("type", `type`)
+
+    payload.map(item.withString("payload", _)).getOrElse(item)
+  }
 }
 
-case class BlottrQuery(
-                        user: Option[String],
-                        composerId: Option[String],
-                        tags: Option[List[String]])
+object Blottr {
+  def apply(item: Item): Blottr = Blottr(
+    key = item.getString("key"),
+    desc = item.getString("desc"),
+    `type` = item.getString("type"),
+    payload = Option(item.getString("payload"))
+  )
+}
+
+case class BlottrQuery(user: Option[String], composerId: Option[String])
 
 object BlottrRepo {
-  val idSeq = new AtomicLong(1)
 
-  val blottrStore = new AtomicReference[List[Blottr]](Nil)
+  val tableName = "blottr"
+  lazy val blottrTable = Dynamo.getTable(tableName)
+
 
   def findBlottrs(q: BlottrQuery) = {
-    val blottrs = blottrStore.get()
 
-    val byUser = q.user.map{ u => blottrs.filter(_.user == Some(u)) }.getOrElse(Nil)
-
-    val byComposer = q.composerId.map{ c =>
-      val cb = blottrs.filter(_.composerId == Some(c))
-
-      if(cb.isEmpty) {
-        List(getOrInitialiseForComposer(c))
-      } else {
-        cb
-      }
-    }.getOrElse(Nil)
-
-    val byTag = q.tags.map{ ts =>
-      blottrs.filter(_.tags.intersect(ts).size > 0)
-    }.getOrElse(Nil)
-
-   val all =  byComposer ::: byUser ::: byTag
-
-    all.distinct
-  }
-
-  def getOrInitialiseForComposer(composerId: String) = {
-    val blottrs = blottrStore.get()
-    val existing = blottrs.filter(_.composerId == Some(composerId)).headOption
-    existing getOrElse {
-      val id = idSeq.incrementAndGet()
-      val blottr = Blottr(id, "Content blottr", "content", None, None, Some(composerId), Nil)
-      blottrStore.set(blottr :: blottrStore.get)
-      blottr
+    val composerBlottr = q.composerId.map("composer:" + _).map{ key =>
+      lookupByKey(key).getOrElse(createComposerBlottr(key))
     }
+    val userBlottr = q.user.map("user:" + _).flatMap(lookupByKey(_))
+
+    Seq(composerBlottr, userBlottr).flatten
+
   }
 
   def addUserBlottr(user: String) = {
-    val blottrs = blottrStore.get()
-    val existing = blottrs.filter(_.user == Some(user)).headOption
-    existing getOrElse {
-      val id = idSeq.incrementAndGet()
-      val blottr = Blottr(id, "Personal blottr", "user", None, Some(user), None, Nil)
-      blottrStore.set(blottr :: blottrStore.get)
-      blottr
-    }
+    val key = s"user:$user"
+    lookupByKey(key).getOrElse(createUserBlottr(key))
   }
 
-  def updateBlottrPayload(id: Long, payload: String) = {
-    val blottr = lookupById(id)
+  def updateBlottrPayload(key: String, payload: String) = {
+    val blottr = lookupByKey(key)
     blottr.foreach { b =>
-      blottrStore.set(b.copy(payload = Some(payload)) :: blottrStore.get.filterNot(_.id == id))
+      saveBlottr(b.copy(payload = Some(payload)))
     }
   }
 
-  def removeBlottr(id: Long) {
-    blottrStore.set(blottrStore.get.filterNot(_.id == id))
+  def removeBlottr(key: String) = {
+    blottrTable.deleteItem("key", key)
   }
 
-  def spawnTagBlottr(id: Long, tag: String, desc: String) {
-    val blottr = lookupById(id)
-    blottr.foreach { b =>
+  private def createComposerBlottr(key: String) = {
+    val blottr = Blottr(key, "Content blottr", "content", None)
+    saveBlottr(blottr)
 
-      val spawnedBlottr = b.copy(
-        id = idSeq.incrementAndGet(),
-        desc = s"Tag $desc blottr",
-        `type` = "tag",
-        user = None,
-        composerId = None,
-        tags = tag :: b.tags
-      )
+    blottr
+  }
+  private def createUserBlottr(key: String) = {
+    val blottr = Blottr(key, "Personal blottr", "user", None)
+    saveBlottr(blottr)
 
-      blottrStore.set(spawnedBlottr :: blottrStore.get)
-    }
+    blottr
   }
 
-  private def lookupById(id: Long) = {
-    blottrStore.get().filter(_.id == id).headOption
+  private def lookupByKey(key: String) = {
+    Option(blottrTable.getItem("key", key)).map(Blottr(_))
   }
+
+  private def saveBlottr(blottr: Blottr) = {
+    blottrTable.putItem(blottr.asDynamoItem)
+  }
+
+
 }

@@ -37,8 +37,7 @@ object BlottrController extends Controller {
 
       val query = BlottrQuery(
         user = req.getQueryString("user"),
-        composerId = req.getQueryString("composerId"),
-        tags = req.getQueryString("tags").map(_.split(",").toList)
+        composerId = req.getQueryString("composerId")
       )
 
       val blottrs = BlottrRepo.findBlottrs(query).map(_.asJson).mkString("[", ",", "]")
@@ -60,23 +59,23 @@ object BlottrController extends Controller {
     }
   }
 
-  def putPayload(id: Long) = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def putPayload(key: String) = CORSable("https://composer.local.dev-gutools.co.uk") {
     Action { req =>
 
       val submission = req.body.asJson.get
       val payload = (submission \ "payload").get.toString
 
 
-      BlottrRepo.updateBlottrPayload(id, payload)
+      BlottrRepo.updateBlottrPayload(key, payload)
 
       NoContent
     }
   }
 
-  def deleteBlottr(id: Long) = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def deleteBlottr(key: String) = CORSable("https://composer.local.dev-gutools.co.uk") {
     Action { req =>
 
-      BlottrRepo.removeBlottr(id)
+      BlottrRepo.removeBlottr(key)
 
       NoContent
     }
