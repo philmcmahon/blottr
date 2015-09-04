@@ -26,33 +26,29 @@ case class CORSable[A](origins: String*)(action: Action[A]) extends Action[A] {
   lazy val parser = action.parser
 }
 
-object BlottrController extends Controller {
+object BlottrController extends Controller with PanDomainAuthActions {
 
-  def hello = Action {
+  def hello = APIAuthAction {
     Ok("Hello from blottr")
   }
 
   def search = CORSable("https://composer.local.dev-gutools.co.uk") {
-    Action { req =>
+    APIAuthAction { req =>
 
       val query = BlottrQuery(
-        user = req.getQueryString("user"),
+        user = Some(req.user.email),
         composerId = req.getQueryString("composerId")
       )
 
       val blottrs = BlottrRepo.findBlottrs(query).map(_.asJson).mkString("[", ",", "]")
-
 
       Ok(blottrs).as(JSON)
     }
   }
 
   def addPersonalBlottr = CORSable("https://composer.local.dev-gutools.co.uk") {
-    Action { req =>
-
-      val submission = req.body.asJson.get
-      val user = (submission \ "user").get.as[String]
-
+    APIAuthAction { req =>
+      val user = req.user.email
       BlottrRepo.addUserBlottr(user)
 
       NoContent
@@ -60,7 +56,7 @@ object BlottrController extends Controller {
   }
 
   def putPayload(key: String) = CORSable("https://composer.local.dev-gutools.co.uk") {
-    Action { req =>
+    APIAuthAction { req =>
 
       val submission = req.body.asJson.get
       val payload = (submission \ "payload").get.toString
@@ -73,7 +69,7 @@ object BlottrController extends Controller {
   }
 
   def deleteBlottr(key: String) = CORSable("https://composer.local.dev-gutools.co.uk") {
-    Action { req =>
+    APIAuthAction { req =>
 
       BlottrRepo.removeBlottr(key)
 

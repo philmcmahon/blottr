@@ -2,7 +2,8 @@ import play.PlayImport.PlayKeys._
 
 lazy val commonLibraryDependencies = Seq(
   ws,
-  "com.amazonaws" % "aws-java-sdk" % "1.10.0"
+  "com.amazonaws" % "aws-java-sdk" % "1.10.0",
+  "com.gu" %% "pan-domain-auth-play_2-4-0" % "0.2.7"
 )
 
 lazy val commonSettings = Seq(

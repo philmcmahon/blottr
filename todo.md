@@ -10,7 +10,6 @@ for hack day
 better app
 ----------
 
- * real persistence
  * support panda auth
  * use panda for user stuff
  * api endpoints (REST?)
