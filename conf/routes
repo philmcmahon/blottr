@@ -6,3 +6,5 @@ PUT     /blottr/:key       controllers.BlottrController.putPayload(key: String)
 DELETE  /blottr/:key       controllers.BlottrController.deleteBlottr(key: String)
 
 OPTIONS        /*url   controllers.BlottrController.allowCORSAccess(methods = "PUT, POST, GET, DELETE", url: String)
+
+GET     /management/healthcheck controllers.BlottrController.healthcheck

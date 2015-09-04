@@ -33,6 +33,8 @@ object BlottrController extends Controller with PanDomainAuthActions {
     Ok("Hello from blottr")
   }
 
+  def healthcheck = Action{ Ok("ok") }
+
   def search = CORSable(BlottrConfig().composerUrl) {
     APIAuthAction { req =>
 
