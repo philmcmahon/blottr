@@ -1,3 +1,5 @@
+addCommandAlias("dist", ";riffRaffArtifact")
+
 import play.PlayImport.PlayKeys._
 
 lazy val commonLibraryDependencies = Seq(
@@ -11,10 +13,13 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= commonLibraryDependencies
 )
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, RiffRaffArtifact)
 .settings(commonSettings: _*).
   settings(
     name := "blottr",
-    playDefaultPort := 9681
+    playDefaultPort := 9681,
+    packageName in Universal := normalizedName.value,
+    riffRaffPackageType := (packageZipTarball in config("universal")).value,
+    doc in Compile <<= target.map(_ / "none")
   )
  
