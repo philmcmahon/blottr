@@ -3,6 +3,7 @@ package controllers
 import com.amazonaws.auth.{AWSCredentials, BasicAWSCredentials}
 import com.gu.pandomainauth.action.AuthActions
 import com.gu.pandomainauth.model.AuthenticatedUser
+import services.BlottrConfig
 
 trait PanDomainAuthActions extends AuthActions {
 
@@ -17,14 +18,7 @@ trait PanDomainAuthActions extends AuthActions {
 
   override def authCallbackUrl: String = "/unused"
 
-  override lazy val domain: String = config.getString("pandomain.domain").getOrElse("local.dev-gutools.co.uk")
+  override lazy val domain: String = BlottrConfig().pandaDomain
 
-  lazy val awsSecretAccessKey = config.getString("pandomain.aws.secret")
-  lazy val awsKeyId = config.getString("pandomain.aws.keyId")
-
-  override lazy val awsCredentials: Option[AWSCredentials] =
-    for (key <- awsKeyId; secret <- awsSecretAccessKey)
-      yield new BasicAWSCredentials(key, secret)
-
-  override lazy val system: String = "workflow"
+  override lazy val system: String = "blottr"
 }

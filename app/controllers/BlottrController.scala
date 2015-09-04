@@ -2,6 +2,7 @@ package controllers
 
 import model.{BlottrRepo, BlottrQuery}
 import play.api.mvc._
+import services.BlottrConfig
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
@@ -32,7 +33,7 @@ object BlottrController extends Controller with PanDomainAuthActions {
     Ok("Hello from blottr")
   }
 
-  def search = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def search = CORSable(BlottrConfig().composerUrl) {
     APIAuthAction { req =>
 
       val query = BlottrQuery(
@@ -46,7 +47,7 @@ object BlottrController extends Controller with PanDomainAuthActions {
     }
   }
 
-  def addPersonalBlottr = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def addPersonalBlottr = CORSable(BlottrConfig().composerUrl) {
     APIAuthAction { req =>
       val user = req.user.email
       BlottrRepo.addUserBlottr(user)
@@ -55,7 +56,7 @@ object BlottrController extends Controller with PanDomainAuthActions {
     }
   }
 
-  def putPayload(key: String) = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def putPayload(key: String) = CORSable(BlottrConfig().composerUrl) {
     APIAuthAction { req =>
 
       val submission = req.body.asJson.get
@@ -68,7 +69,7 @@ object BlottrController extends Controller with PanDomainAuthActions {
     }
   }
 
-  def deleteBlottr(key: String) = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def deleteBlottr(key: String) = CORSable(BlottrConfig().composerUrl) {
     APIAuthAction { req =>
 
       BlottrRepo.removeBlottr(key)
@@ -77,7 +78,7 @@ object BlottrController extends Controller with PanDomainAuthActions {
     }
   }
 
-  def allowCORSAccess(methods: String, args: Any*) = CORSable("https://composer.local.dev-gutools.co.uk") {
+  def allowCORSAccess(methods: String, args: Any*) = CORSable(BlottrConfig().composerUrl) {
 
     Action { implicit req =>
       val requestedHeaders = req.headers("Access-Control-Request-Headers")
